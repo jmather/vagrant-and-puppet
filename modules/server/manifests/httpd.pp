@@ -5,7 +5,7 @@ class server::httpd {
 
   service { "httpd":
     ensure => running,
-    enabled => true,
+    enable => true,
     require => Package["httpd"],
   }
 }

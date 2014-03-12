@@ -5,7 +5,7 @@ class server::db {
 
   service { "mysqld":
     ensure => running,
-    enabled => true,
+    enable => true,
     require => Package["mysql-server"],
   }
 }
