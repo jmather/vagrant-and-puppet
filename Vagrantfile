@@ -1,5 +1,7 @@
+# Add lib to our loading path
 $LOAD_PATH.unshift(File.dirname(__FILE__) + '/lib')
 
+# Can you think of how to do this better? I'll leave this to you!
 nodes = {
   'web' => {
     :hostname => 'web-server.example.com',
@@ -11,12 +13,13 @@ nodes = {
   }
 }
 
+# We don't use this for anything now, but you can in the future!
 config_file_path = File.join(File.dirname(File.expand_path(__FILE__)), 'config.yaml')
 config_file_defaults_path = File.join(File.dirname(File.expand_path(__FILE__)), 'config.yaml.defaults')
 
 require 'config_manager'
 config_manager = ConfigManager.new(config_file_defaults_path, config_file_path)
-vagrant_config = config_manager.getConfig()
+vagrant_config = config_manager.load()
 
 Vagrant.configure("2") do |config|
   nodes.each_pair do |name, options|
@@ -37,7 +40,8 @@ Vagrant.configure("2") do |config|
           'custom_fact' => 'custom value'
         }
 
-        puppet.facter = facts
+        # We can make our entire config available from puppet as well
+        puppet.facter = facts.merge(vagrant_config)
       end
     end
   end
