@@ -1,3 +1,5 @@
+$LOAD_PATH.unshift(File.dirname(__FILE__) + '/lib')
+
 nodes = {
   'web' => {
     :hostname => 'web-server.example.com',
@@ -8,6 +10,13 @@ nodes = {
     :ipAddress => '192.168.56.70',
   }
 }
+
+config_file_path = File.join(File.dirname(File.expand_path(__FILE__)), 'config.yaml')
+config_file_defaults_path = File.join(File.dirname(File.expand_path(__FILE__)), 'config.yaml.defaults')
+
+require 'config_manager'
+config_manager = ConfigManager.new(config_file_defaults_path, config_file_path)
+vagrant_config = config_manager.getConfig()
 
 Vagrant.configure("2") do |config|
   nodes.each_pair do |name, options|
@@ -22,6 +31,13 @@ Vagrant.configure("2") do |config|
         puppet.manifests_path = "manifests/"
         puppet.manifest_file = "init.pp"
         puppet.module_path = "modules/"
+        puppet.options = "--hiera_config /vagrant/hiera.yaml"
+
+        facts = {
+          'custom_fact' => 'custom value'
+        }
+
+        puppet.facter = facts
       end
     end
   end
